@@ -3,7 +3,7 @@
 // Константы для OAuth2
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID; // Замените на ваш CLIENT_ID из Secrets
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET; // Замените на ваш CLIENT_SECRET из Secrets
-const REDIRECT_URI = 'http://localhost:3000/oauth2callback'; // URI перенаправления
+const REDIRECT_URI = 'https://chuprinov-igor.github.io/timka'; // URI перенаправления
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; // Разрешения для доступа к таблицам
 
 // Инициализация OAuth2 клиента
