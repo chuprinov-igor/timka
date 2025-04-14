@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гастродневник для собаки</title>
+    <style>
+        /* Reset and Base Styles */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --system-blue: #007AFF;
+            --system-green: #34C759;
+            --system-indigo: #5856D6;
+            --system-orange: #FF9500;
+            --system-pink: #FF2D55;
+            --system-purple: #AF52DE;
+            --system-red: #FF3B30;
+            --system-teal: #5AC8FA;
+            --system-yellow: #FFCC00;
+            --system-gray: #8E8E93;
+            --system-gray2: #AEAEB2;
+            --system-gray3: #C7C7CC;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+            
+            --primary-text: #1C1C1E;
+            --secondary-text: #3C3C43;
+            --tertiary-text: #48484A;
+            --placeholder-text: rgba(60, 60, 67, 0.3);
+            
+            --background-primary: #FFFFFF;
+            --background-secondary: #F2F2F7;
+            --background-tertiary: #E5E5EA;
+            
+            --separator-color: rgba(60, 60, 67, 0.1);
+            --opaque-separator: rgba(198, 198, 200, 0.5);
+            
+            --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.2);
+            
+            --section-radius: 12px;
+            --element-radius: 10px;
+            --small-radius: 6px;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--background-secondary);
+            color: var(--primary-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 16px; /* Padding for desktop */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Container */
+        .container {
+            max-width: 680px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--background-primary);
+            border-radius: var(--section-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            padding: 24px 20px 16px; /* Padding for desktop */
+            border-bottom: 1px solid var(--separator-color);
+            position: relative;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin: 0;
+        }
+
+        /* Form Content */
+        .form-content {
+            padding: 0 20px; /* Padding for desktop */
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Form Sections */
+        .form-section {
+            padding: 20px 0; /* Only vertical padding */
+            border-bottom: 1px solid var(--separator-color);
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px; 
+            line-height: 1; 
+        }
+        
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--primary-text);
+            flex-grow: 1;
+        }
+        
+        .section-action {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--system-blue);
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Labels */
+        label { /* General label styling */
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--secondary-text);
+        }
+
+        /* Input Fields */
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--system-gray5);
+            border-radius: var(--element-radius);
+            font-size: 16px;
+            background-color: var(--background-primary);
+            transition: all 0.2s ease;
+            color: var(--primary-text);
+            appearance: none;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--system-blue);
+            box-shadow: var(--focus-ring);
+        }
+        
+        .input-field::placeholder {
+            color: var(--placeholder-text);
+        }
+
+        /* Select Specific Styling */
+        select.input-field {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 14px;
+            padding-right: 40px;
+        }
+
+        /* Checkbox Group */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            position: relative; 
+        }
+        
+        .checkbox-input { 
+            position: absolute;
+            opacity: 0;
+            height: 0;
+            width: 0;
+            cursor: pointer;
+        }
+        
+        .checkbox-label { 
+            position: relative;
+            padding-left: 32px; 
+            font-size: 15px;
+            color: var(--primary-text);
+            cursor: pointer;
+            user-select: none;
+            line-height: 1.4;
+            min-height: 24px; 
+            display: flex;
+            align-items: center;
+            width: 100%; 
+            margin-bottom: 0; 
+        }
+        
+        .checkbox-custom { 
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%); 
+            left: 0;
+            height: 22px;
+            width: 22px;
+            background-color: var(--background-primary);
+            border: 1.5px solid var(--system-gray4);
+            border-radius: var(--small-radius);
+            transition: all 0.2s ease;
+            pointer-events: none; 
+        }
+
+        .checkbox-label:hover .checkbox-custom {
+             border-color: var(--system-gray2);
+        }
+        
+        .checkbox-input:checked + .checkbox-label .checkbox-custom {
+            background-color: var(--system-blue);
+            border-color: var(--system-blue);
+        }
+        
+        .checkbox-custom::after {
+            content: "";
+            position: absolute;
+            display: none; 
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .checkbox-input:checked + .checkbox-label .checkbox-custom::after {
+            display: block;
+        }
+        
+        .checkbox-input:focus + .checkbox-label .checkbox-custom {
+            box-shadow: var(--focus-ring);
+        }
+
+        /* Optional Section */
+        .optional-section {
+            display: none;
+            background: var(--background-secondary);
+            padding: 16px;
+            border-radius: var(--element-radius);
+            margin-top: 12px;
+            border: 1px solid var(--separator-color);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .optional-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            padding: 20px; /* Padding for desktop */
+            background-color: var(--background-primary);
+            border-top: 1px solid var(--separator-color);
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--element-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--system-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0062CC; 
+        }
+        
+        .btn-primary:active {
+            background-color: #004799; 
+        }
+        
+        .btn-secondary {
+            background-color: var(--system-gray6);
+            color: var(--system-blue);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--system-gray5);
+        }
+        
+        .btn-secondary:active {
+            background-color: var(--system-gray4);
+        }
+
+        /* --- Media Queries for Mobile --- */
+        /* Медиа-запросы для мобильных устройств */
+@media (max-width: 600px) {
+    body {
+        padding: 0; /* Убираем отступы с боков */
+        margin: 0;
+        background-color: var(--background-primary);
+    }
+    .container {
+        border-radius: 0; /* Убираем скругление углов */
+        box-shadow: none; /* Убираем тень */
+        margin: 0;
+        max-width: 100%; /* Форма занимает всю ширину */
+        width: 100%;
+    }
+    .header {
+        padding: 16px 16px 12px; /* Оставляем небольшие отступы сверху и снизу */
+    }
+    .form-content {
+        padding: 0 16px; /* Небольшие отступы для контента формы */
+    }
+    .button-group {
+        padding: 16px; /* Отступы для кнопок */
+        gap: 8px;
+        position: sticky;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.85); /* Полупрозрачный фон */
+        backdrop-filter: blur(10px); /* Размытие фона */
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .btn {
+        font-size: 15px;
+        padding: 10px;
+    }
+}
+
+        /* --- Dark Mode Support --- */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-text: #FFFFFF;
+                --secondary-text: #EBEBF599; 
+                --tertiary-text: #EBEBF54D; 
+                --placeholder-text: rgba(235, 235, 245, 0.3);
+                
+                --background-primary: #1C1C1E; 
+                --background-secondary: #000000; 
+                --background-tertiary: #2C2C2E; 
+                
+                --separator-color: rgba(84, 84, 88, 0.65);
+                --opaque-separator: rgba(56, 56, 58, 0.5);
+                
+                --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.24), 0 1px 4px rgba(0, 0, 0, 0.12);
+            }
+            
+            .input-field {
+                background-color: var(--background-tertiary);
+                border-color: var(--separator-color);
+                color: var(--primary-text);
+            }
+            
+            select.input-field {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'); 
+            }
+            
+            .checkbox-custom {
+                background-color: var(--background-tertiary);
+                border-color: var(--separator-color);
+            }
+
+            .checkbox-label:hover .checkbox-custom {
+                border-color: var(--system-gray); 
+            }
+            
+            .btn-secondary {
+                background-color: var(--background-tertiary);
+                 color: var(--system-blue); 
+            }
+             .btn-secondary:hover {
+                 background-color: #38383A; 
+             }
+             .btn-secondary:active {
+                 background-color: #48484A; 
+             }
+
+             @media (max-width: 600px) {
+                body {
+                    background-color: var(--background-primary); 
+                }
+                 .button-group {
+                    background-color: rgba(28, 28, 30, 0.85); 
+                 }
+             }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Гастродневник для собаки</h1>
+        </div>
+        
+        <div class="form-content">
+            <form id="diaryForm" onsubmit="handleSubmit(event)">
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">📅</div>
+                        <div class="section-title">Дата</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Когда</label>
+                        <input type="date" id="date" class="input-field" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">💊</div>
+                        <div class="section-title">Таблетки</div>
+                    </div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Апоквел (2р/д)" id="tablet-apokvel" class="checkbox-input">
+                            <label for="tablet-apokvel" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Апоквел (2р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Урсосан (1р/д)" id="tablet-ursosan" class="checkbox-input">
+                            <label for="tablet-ursosan" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Урсосан (1р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Энтерол (2р/д)" id="tablet-enterol" class="checkbox-input">
+                            <label for="tablet-enterol" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Энтерол (2р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Лактобиф (1р/д)" id="tablet-lactobif" class="checkbox-input">
+                            <label for="tablet-lactobif" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Лактобиф (1р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Другое" id="tabletsOther" class="checkbox-input">
+                            <label for="tabletsOther" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Другое
+                            </label>
+                        </div>
+                    </div>
+                    <div id="tabletsOtherInput" class="optional-section">
+                        <div class="form-group">
+                            <label for="tabletsOtherText">Укажите</label>
+                            <input type="text" id="tabletsOtherText" class="input-field" placeholder="Например: Название (дозировка)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🥣</div>
+                        <div class="section-title">Корм</div>
+                    </div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Гастропаштет (Farmina)" id="food-farmina" class="checkbox-input">
+                            <label for="food-farmina" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Гастропаштет (Farmina)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Гастрокорм (Forza10)" id="food-forza10" class="checkbox-input">
+                            <label for="food-forza10" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Гастрокорм (Forza10)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Паштет (monge)" id="food-monge" class="checkbox-input">
+                            <label for="food-monge" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Паштет (monge)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Вкусняшки" id="food-treats" class="checkbox-input">
+                            <label for="food-treats" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Вкусняшки
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Со стола" id="food-table" class="checkbox-input">
+                            <label for="food-table" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Со стола
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🍽️</div>
+                        <div class="section-title">Кол-во приемов пищи</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mealCount">Сколько раз</label>
+                        <input type="number" id="mealCount" class="input-field" min="0">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">😋</div>
+                        <div class="section-title">Аппетит</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appetite">Оценка</label>
+                        <select id="appetite" class="input-field">
+                            <option value="Хороший">Хороший</option>
+                            <option value="Вялый">Вялый</option>
+                            <option value="Отказ от еды">Отказ от еды</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                     <div class="section-header">
+                         <div class="section-icon">💩</div>
+                         <div class="section-title">Стул</div>
+                     </div>
+                     <div class="form-group">
+                          <label for="stoolCount">Количество раз</label>
+                          <select id="stoolCount" class="input-field">
+                              <option value="Один">Один</option>
+                              <option value="Два">Два</option>
+                              <option value="Три">Три</option>
+                              <option value="Четыре и больше">Четыре и больше</option>
+                              <option value="Понос">Понос</option>
+                              <option value="Не было">Не было</option>
+                          </select>
+                     </div>
+                      <div class="form-group">
+                          <label for="stoolConsistency">Консистенция</label>
+                          <select id="stoolConsistency" class="input-field">
+                              <option value="Камушки">Камушки</option>
+                              <option value="Колбаски">Колбаски</option>
+                              <option value="Мягкие">Мягкие</option>
+                              <option value="Жидкие">Жидкие</option>
+                              <option value="С кровью">С кровью</option>
+                              <option value="Со слизью">Со слизью</option>
+                              <option value="Не было">Не было</option>
+                          </select>
+                      </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🤢</div>
+                        <div class="section-title">Дополнительные симптомы</div>
+                        <button type="button" class="section-action" onclick="toggleSymptoms()">Добавить/Скрыть</button>
+                    </div>
+                    <div id="nausea-section" class="optional-section">
+                        <div class="form-group">
+                            <label for="nausea">Тошнота</label>
+                            <input type="text" id="nausea" class="input-field" placeholder="Описание, если была">
+                        </div>
+                        <div class="form-group">
+                            <label for="vomiting">Рвота</label>
+                            <input type="text" id="vomiting" class="input-field" placeholder="Описание, если была">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">😨</div>
+                        <div class="section-title">Стресс</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="stress">Был ли?</label>
+                        <select id="stress" class="input-field">
+                            <option value="Нет">Нет</option>
+                            <option value="Да">Да</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">💧</div> 
+                        <div class="section-title">Недержание / Лужи</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="leakage">Были ли случаи?</label>
+                        <select id="leakage" class="input-field">
+                            <option value="Нет">Нет</option>
+                            <option value="Да слегка">Да слегка</option>
+                            <option value="Да сильно">Да сильно</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🟢</div>
+                        <div class="section-title">Состояние</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="condition">Оценка</label>
+                        <select id="condition" class="input-field">
+                            <option value="Активный">Активный</option>
+                            <option value="Вялый слегка">Вялый слегка</option>
+                            <option value="Тяпочкой">Лежит тряпочкой</option>
+                            <option value="Беспокойный">Беспокойный</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="button-group">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('diaryForm').reset(); setupDefaultState();">Очистить</button>
+            <button type="submit" form="diaryForm" class="btn btn-primary">Сохранить</button>
+        </div>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT КОД (без изменений) ---
+
+        // Установка полного размера экрана для мобильных устройств
+    function adjustWindowSize() {
+        if (typeof google !== 'undefined' && google.script && google.script.host) {
+            google.script.host.setHeight('100%');
+            google.script.host.setWidth('100%');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        adjustWindowSize(); // Настройка размера при загрузке страницы
+        setDefaultDate();
+        populateForm(lastEntry);
+    });
+
+        function setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('date');
+            if (!dateInput.value) {
+                dateInput.value = today;
+            }
+        }
+
+        function setupDefaultState() {
+            setDefaultDate();
+            // Скрыть опциональные секции
+            document.getElementById('tabletsOtherInput').classList.remove('active');
+            document.getElementById('nausea-section').classList.remove('active');
+            
+            // Сбросить select'ы (reset() должен это делать, но для надежности)
+            document.querySelectorAll('.input-field[id]').forEach(el => {
+                if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0; 
+                }
+            });
+
+             const otherTextInput = document.getElementById('tabletsOtherText');
+            if (otherTextInput) {
+                otherTextInput.value = '';
+            }
+        }
+
+        let lastEntry = {}; 
+        try {
+            lastEntry = JSON.parse('<?!= JSON.stringify(lastEntry) ?>');
+        } catch (e) {
+            console.error("Error parsing lastEntry:", e);
+             lastEntry = { 
+                 tablets: [], food: [], mealCount: '0', appetite: 'Хороший',
+                 stoolCount: 'Один', stoolConsistency: 'Камушки', nausea: '',
+                 vomiting: '', stress: 'Нет', leakage: 'Нет', condition: 'Активный'
+             };
+        }
+
+
+        function populateForm(entry) {
+            entry = entry || {}; 
+
+            const tablets = entry.tablets || [];
+            let otherTabletValue = '';
+            const standardTablets = ['Апоквел (2р/д)', 'Урсосан (1р/д)', 'Энтерол (2р/д)', 'Лактобиф (1р/д)'];
+            document.querySelectorAll('.checkbox-input[name="tablets"]').forEach(checkbox => {
+                 const isStandard = standardTablets.includes(checkbox.value);
+                 const isOtherCheckbox = checkbox.id === 'tabletsOther';
+                 checkbox.checked = false; 
+
+                 if (tablets.includes(checkbox.value)) {
+                     checkbox.checked = true;
+                 } else if (isOtherCheckbox && tablets.some(t => !standardTablets.includes(t) && t !== 'Другое' && t)) {
+                     checkbox.checked = true;
+                     otherTabletValue = tablets.find(t => !standardTablets.includes(t) && t !== 'Другое' && t) || '';
+                 }
+            });
+            document.getElementById('tabletsOtherText').value = otherTabletValue;
+            document.getElementById('tabletsOtherInput').classList.toggle('active', document.getElementById('tabletsOther').checked);
+
+
+            const food = entry.food || [];
+            document.querySelectorAll('.checkbox-input[name="food"]').forEach(checkbox => {
+                checkbox.checked = food.includes(checkbox.value);
+            });
+
+            document.getElementById('mealCount').value = entry.mealCount || '0';
+            document.getElementById('appetite').value = entry.appetite || 'Хороший';
+            document.getElementById('stoolCount').value = entry.stoolCount || 'Один';
+            document.getElementById('stoolConsistency').value = entry.stoolConsistency || 'Камушки';
+            document.getElementById('nausea').value = entry.nausea || ''; 
+            document.getElementById('vomiting').value = entry.vomiting || ''; 
+            document.getElementById('stress').value = entry.stress || 'Нет';
+            document.getElementById('leakage').value = entry.leakage || 'Нет';
+            document.getElementById('condition').value = entry.condition || 'Активный';
+
+             const nauseaSection = document.getElementById('nausea-section');
+             if (entry.nausea || entry.vomiting) { 
+                 nauseaSection.classList.add('active');
+             } else {
+                  nauseaSection.classList.remove('active');
+             }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaultDate(); 
+            populateForm(lastEntry); 
+
+            const otherCheckbox = document.getElementById('tabletsOther');
+            if(otherCheckbox) {
+                otherCheckbox.addEventListener('change', function() {
+                    const otherInputSection = document.getElementById('tabletsOtherInput');
+                    const otherTextInput = document.getElementById('tabletsOtherText');
+                    otherInputSection.classList.toggle('active', this.checked);
+                    if (!this.checked) {
+                        otherTextInput.value = ''; 
+                    }
+                });
+            }
+
+             const resetButton = document.querySelector('.btn-secondary');
+             if (resetButton) {
+                 resetButton.addEventListener('click', () => {
+                     document.getElementById('diaryForm').reset(); 
+                     setupDefaultState(); 
+                 });
+             }
+        });
+
+
+        function toggleSymptoms() {
+            document.getElementById('nausea-section').classList.toggle('active');
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const tabletsCheckboxes = document.querySelectorAll('.checkbox-input[name="tablets"]:checked');
+            const tablets = Array.from(tabletsCheckboxes).map(cb => {
+                if (cb.id === 'tabletsOther') {
+                    const otherText = document.getElementById('tabletsOtherText').value.trim();
+                    return otherText ? otherText : null; 
+                }
+                return cb.value;
+            }).filter(value => value !== null); 
+
+            const foodCheckboxes = document.querySelectorAll('.checkbox-input[name="food"]:checked');
+            const food = Array.from(foodCheckboxes).map(cb => cb.value);
+
+            const formData = {
+                date: document.getElementById('date').value,
+                tablets: tablets.length > 0 ? tablets : [], 
+                food: food.length > 0 ? food : [],         
+                mealCount: document.getElementById('mealCount').value || '0',
+                appetite: document.getElementById('appetite').value,
+                stoolCount: document.getElementById('stoolCount').value,
+                stoolConsistency: document.getElementById('stoolConsistency').value,
+                nausea: document.getElementById('nausea').value.trim(), 
+                vomiting: document.getElementById('vomiting').value.trim(),
+                stress: document.getElementById('stress').value,
+                leakage: document.getElementById('leakage').value,
+                condition: document.getElementById('condition').value
+            };
+
+            if (!formData.date) {
+                alert('Укажите дату!');
+                document.getElementById('date').focus();
+                return;
+            }
+
+            console.log("Sending data:", formData); 
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(() => {
+                        alert('Данные успешно сохранены!');
+                        document.getElementById('diaryForm').reset();
+                        setupDefaultState(); 
+                        // google.script.host.close(); 
+                    })
+                    .withFailureHandler((error) => {
+                        alert('Ошибка при сохранении: ' + error.message);
+                        console.error('Save Error:', error);
+                    })
+                    .saveEntry(formData);
+            } else {
+                alert('Функция сохранения недоступна (google.script.run не найден). Данные в консоли.');
+                console.log('Data that would be sent:', formData);
+            }
+        }
+    </script>
+</body>
+</html>
