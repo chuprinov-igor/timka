@@ -1,168 +1,132 @@
-// Конфигурация Google API
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'YOUR_CLIENT_ID.apps.googleusercontent.com';
-const API_KEY = process.env.GOOGLE_API_KEY || 'YOUR_API_KEY'; // Опционально, если используете только OAuth
-const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || 'YOUR_SPREADSHEET_ID';
-const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+// scripts.js
 
+// Константы для OAuth2
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID; // Замените на ваш CLIENT_ID из Secrets
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET; // Замените на ваш CLIENT_SECRET из Secrets
+const REDIRECT_URI = 'http://localhost:3000/oauth2callback'; // URI перенаправления
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; // Разрешения для доступа к таблицам
 
-// Установка текущей даты по умолчанию
-function setDefaultDate() {
-    const today = new Date().toISOString().split('T')[0];
-    const dateInput = document.getElementById('date');
-    if (!dateInput.value) {
-        dateInput.value = today;
-    }
+// Инициализация OAuth2 клиента
+function getOAuth2Client() {
+  return new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 }
 
-// Сброс формы и установка начального состояния
-function setupDefaultState() {
-    setDefaultDate();
-    document.getElementById('tabletsOtherInput').classList.remove('active');
-    document.getElementById('nausea-section').classList.remove('active');
-    
-    document.querySelectorAll('.input-field[id]').forEach(el => {
-        if (el.tagName === 'SELECT') {
-            el.selectedIndex = 0;
-        }
+// Функция для получения токена доступа
+async function getAccessToken(oAuth2Client) {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+  });
+
+  console.log('Авторизуйтесь по ссылке:', authUrl);
+
+  // Получение кода авторизации (пользователь должен скопировать его из браузера)
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const code = await new Promise((resolve) => {
+    rl.question('Введите код авторизации: ', (code) => {
+      rl.close();
+      resolve(code);
+    });
+  });
+
+  const { tokens } = await oAuth2Client.getToken(code);
+  oAuth2Client.setCredentials(tokens);
+  return oAuth2Client;
+}
+
+// Функция для получения последней записи из таблицы
+async function getLastEntry() {
+  const oAuth2Client = getOAuth2Client();
+  await getAccessToken(oAuth2Client);
+
+  const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
+  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID; // Замените на ваш SPREADSHEET_ID
+
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'A:Z', // Укажите диапазон данных
     });
 
-    const otherTextInput = document.getElementById('tabletsOtherText');
-    if (otherTextInput) {
-        otherTextInput.value = '';
-    }
-}
+    const data = response.data.values;
 
-// Заглушка для последней записи (вне Google Apps Script)
-let lastEntry = {
-    tablets: [],
-    food: [],
-    mealCount: '0',
-    appetite: 'Хороший',
-    stoolCount: 'Один',
-    stoolConsistency: 'Камушки',
-    nausea: '',
-    vomiting: '',
-    stress: 'Нет',
-    leakage: 'Нет',
-    condition: 'Активный'
-};
-
-// Заполнение формы данными последней записи
-function populateForm(entry) {
-    entry = entry || {};
-
-    const tablets = entry.tablets || [];
-    let otherTabletValue = '';
-    const standardTablets = ['Апоквел (2р/д)', 'Урсосан (1р/д)', 'Энтерол (2р/д)', 'Лактобиф (1р/д)'];
-    document.querySelectorAll('.checkbox-input[name="tablets"]').forEach(checkbox => {
-        const isStandard = standardTablets.includes(checkbox.value);
-        const isOtherCheckbox = checkbox.id === 'tabletsOther';
-        checkbox.checked = false;
-
-        if (tablets.includes(checkbox.value)) {
-            checkbox.checked = true;
-        } else if (isOtherCheckbox && tablets.some(t => !standardTablets.includes(t) && t !== 'Другое' && t)) {
-            checkbox.checked = true;
-            otherTabletValue = tablets.find(t => !standardTablets.includes(t) && t !== 'Другое' && t) || '';
-        }
-    });
-    document.getElementById('tabletsOtherText').value = otherTabletValue;
-    document.getElementById('tabletsOtherInput').classList.toggle('active', document.getElementById('tabletsOther').checked);
-
-    const food = entry.food || [];
-    document.querySelectorAll('.checkbox-input[name="food"]').forEach(checkbox => {
-        checkbox.checked = food.includes(checkbox.value);
-    });
-
-    document.getElementById('mealCount').value = entry.mealCount || '0';
-    document.getElementById('appetite').value = entry.appetite || 'Хороший';
-    document.getElementById('stoolCount').value = entry.stoolCount || 'Один';
-    document.getElementById('stoolConsistency').value = entry.stoolConsistency || 'Камушки';
-    document.getElementById('nausea').value = entry.nausea || '';
-    document.getElementById('vomiting').value = entry.vomiting || '';
-    document.getElementById('stress').value = entry.stress || 'Нет';
-    document.getElementById('leakage').value = entry.leakage || 'Нет';
-    document.getElementById('condition').value = entry.condition || 'Активный';
-
-    const nauseaSection = document.getElementById('nausea-section');
-    if (entry.nausea || entry.vomiting) {
-        nauseaSection.classList.add('active');
-    } else {
-        nauseaSection.classList.remove('active');
-    }
-}
-
-// Инициализация формы при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    setDefaultDate();
-    populateForm(lastEntry);
-
-    const otherCheckbox = document.getElementById('tabletsOther');
-    if (otherCheckbox) {
-        otherCheckbox.addEventListener('change', function() {
-            const otherInputSection = document.getElementById('tabletsOtherInput');
-            const otherTextInput = document.getElementById('tabletsOtherText');
-            otherInputSection.classList.toggle('active', this.checked);
-            if (!this.checked) {
-                otherTextInput.value = '';
-            }
-        });
+    if (!data || data.length <= 1) {
+      return {
+        tablets: [],
+        food: [],
+        mealCount: '0',
+        appetite: 'Хороший',
+        stoolCount: 'Один',
+        stoolConsistency: 'Камушки',
+        nausea: 'Нет',
+        vomiting: 'Нет',
+        stress: 'Нет',
+        leakage: 'Нет',
+        condition: 'Активный',
+      };
     }
 
-    const resetButton = document.querySelector('.btn-secondary');
-    if (resetButton) {
-        resetButton.addEventListener('click', () => {
-            document.getElementById('diaryForm').reset();
-            setupDefaultState();
-        });
-    }
-});
-
-// Показать/скрыть секцию симптомов
-function toggleSymptoms() {
-    document.getElementById('nausea-section').classList.toggle('active');
-}
-
-// Обработка отправки формы
-function handleSubmit(event) {
-    event.preventDefault();
-
-    const tabletsCheckboxes = document.querySelectorAll('.checkbox-input[name="tablets"]:checked');
-    const tablets = Array.from(tabletsCheckboxes).map(cb => {
-        if (cb.id === 'tabletsOther') {
-            const otherText = document.getElementById('tabletsOtherText').value.trim();
-            return otherText ? otherText : null;
-        }
-        return cb.value;
-    }).filter(value => value !== null);
-
-    const foodCheckboxes = document.querySelectorAll('.checkbox-input[name="food"]:checked');
-    const food = Array.from(foodCheckboxes).map(cb => cb.value);
-
-    const formData = {
-        date: document.getElementById('date').value,
-        tablets: tablets.length > 0 ? tablets : [],
-        food: food.length > 0 ? food : [],
-        mealCount: document.getElementById('mealCount').value || '0',
-        appetite: document.getElementById('appetite').value,
-        stoolCount: document.getElementById('stoolCount').value,
-        stoolConsistency: document.getElementById('stoolConsistency').value,
-        nausea: document.getElementById('nausea').value.trim(),
-        vomiting: document.getElementById('vomiting').value.trim(),
-        stress: document.getElementById('stress').value,
-        leakage: document.getElementById('leakage').value,
-        condition: document.getElementById('condition').value
+    const lastRow = data[data.length - 1];
+    return {
+      tablets: lastRow[1] ? lastRow[1].split(', ') : [],
+      food: lastRow[2] ? lastRow[2].split(', ') : [],
+      mealCount: lastRow[3] || '0',
+      appetite: lastRow[4] || 'Хороший',
+      stoolCount: lastRow[5] || 'Один',
+      stoolConsistency: lastRow[6] || 'Камушки',
+      nausea: lastRow[7] || 'Нет',
+      vomiting: lastRow[8] || 'Нет',
+      stress: lastRow[9] || 'Нет',
+      leakage: lastRow[10] || 'Нет',
+      condition: lastRow[11] || 'Активный',
     };
+  } catch (error) {
+    console.error('Ошибка при получении данных:', error);
+    throw error;
+  }
+}
 
-    if (!formData.date) {
-        alert('Укажите дату!');
-        document.getElementById('date').focus();
-        return;
-    }
+// Функция для сохранения данных в таблицу
+async function saveEntry(formData) {
+  const oAuth2Client = getOAuth2Client();
+  await getAccessToken(oAuth2Client);
 
-    console.log("Данные формы:", formData);
-    alert('Данные выведены в консоль, так как сохранение не поддерживается вне Google Apps Script.');
-    document.getElementById('diaryForm').reset();
-    setupDefaultState();
+  const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
+  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+
+  const rowData = [
+    formData.date,
+    formData.tablets.join(', '),
+    formData.food.join(', '),
+    formData.mealCount,
+    formData.appetite,
+    formData.stoolCount,
+    formData.stoolConsistency,
+    formData.nausea,
+    formData.vomiting,
+    formData.stress,
+    formData.leakage,
+    formData.condition,
+  ];
+
+  try {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: 'A:Z', // Укажите диапазон данных
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [rowData],
+      },
+    });
+
+    console.log('Данные успешно сохранены!');
+  } catch (error) {
+    console.error('Ошибка при сохранении данных:', error);
+    throw error;
+  }
 }
