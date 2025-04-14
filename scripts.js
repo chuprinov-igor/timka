@@ -1,3 +1,11 @@
+// Конфигурация Google API
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const API_KEY = process.env.GOOGLE_API_KEY || 'YOUR_API_KEY'; // Опционально, если используете только OAuth
+const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || 'YOUR_SPREADSHEET_ID';
+const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+
 // Установка текущей даты по умолчанию
 function setDefaultDate() {
     const today = new Date().toISOString().split('T')[0];
