@@ -37,4 +37,19 @@ jobs:
         sed -i "s@{{ GITHUB_SECRET_API_KEY }}@$API_KEY_VALUE@g" script.js
 
         # Проверяем, что замены прошли успешно
-        if grep -q "{{ GITHUB_SECRET_"
+        if grep -q "{{ GITHUB_SECRET_" script.js; then
+          echo "Error: Some placeholders were not replaced in script.js"
+          exit 1
+        fi
+
+        echo "Secrets replaced in script.js"
+      env:
+        CLIENT_ID_VALUE: ${{ secrets.CLIENT_ID }}
+        SPREADSHEET_ID_VALUE: ${{ secrets.SPREADSHEET_ID }}
+        API_KEY_VALUE: ${{ secrets.API_KEY }}
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .
