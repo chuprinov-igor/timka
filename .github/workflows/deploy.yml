@@ -1,0 +1,60 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Запускать при пуше в ветку main (или вашу основную ветку)
+  workflow_dispatch: # Позволяет запускать вручную из интерфейса GitHub Actions
+
+# Права доступа для развертывания на GitHub Pages
+permissions:
+  contents: read # Нужно для checkout
+  pages: write    # Нужно для развертывания на Pages
+  id-token: write # Нужно для аутентификации деплоя
+
+# Разрешить только один одновременный деплой, отменяя предыдущие запуски
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # URL развернутого сайта
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Получаем код из репозитория
+
+      - name: Replace Secrets in JS
+        run: |
+          # Проверяем, существует ли файл script.js
+          if [ ! -f script.js ]; then
+            echo "Error: script.js not found!"
+            exit 1
+          fi
+          # Заменяем заполнители на реальные секреты
+          # Используем переменные окружения, чтобы избежать проблем со спецсимволами в секретах
+          sed -i "s|{{ GITHUB_SECRET_CLIENT_ID }}|$CLIENT_ID_VALUE|g" script.js
+          sed -i "s|{{ GITHUB_SECRET_SPREADSHEET_ID }}|$SPREADSHEET_ID_VALUE|g" script.js
+          sed -i "s|{{ GITHUB_SECRET_API_KEY }}|$API_KEY_VALUE|g" script.js
+          echo "Secrets replaced in script.js"
+        env:
+          # Передаем секреты в переменные окружения шага
+          CLIENT_ID_VALUE: ${{ secrets.CLIENT_ID }}
+          SPREADSHEET_ID_VALUE: ${{ secrets.SPREADSHEET_ID }}
+          API_KEY_VALUE: ${{ secrets.API_KEY }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4 # Настраиваем GitHub Pages
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3 # Загружаем файлы сайта как артефакт
+        with:
+          # Указываем папку для загрузки. Если файлы в корне, то '.'
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # Развертываем артефакт на GitHub Pages
