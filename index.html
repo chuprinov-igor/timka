@@ -11,7 +11,6 @@
         <div class="header">
             <h1>Гастродневник для собаки</h1>
         </div>
-        
         <div class="form-content">
             <form id="diaryForm" onsubmit="handleSubmit(event)">
                 <div class="form-section">
@@ -24,7 +23,6 @@
                         <input type="date" id="date" class="input-field" required>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">💊</div>
@@ -74,7 +72,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🥣</div>
@@ -118,7 +115,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🍽️</div>
@@ -129,7 +125,6 @@
                         <input type="number" id="mealCount" class="input-field" min="0">
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">😋</div>
@@ -144,7 +139,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">💩</div>
@@ -174,7 +168,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🤢</div>
@@ -192,7 +185,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">😨</div>
@@ -206,7 +198,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">💧</div>
@@ -221,7 +212,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🟢</div>
@@ -239,18 +229,15 @@
                 </div>
             </form>
         </div>
-
         <div class="button-group">
             <button type="button" class="btn btn-secondary" onclick="document.getElementById('diaryForm').reset(); setupDefaultState();">Очистить</button>
-            <button type="submit" form="diaryForm" class="btn btn-primary" disabled>Сохранить</button>
-            <button id="authorize_button" onclick="signIn()">Авторизоваться в Google</button>
+            <button type="submit" form="diaryForm" class="btn btn-primary">Сохранить</button>
+            <button id="authorize_button" onclick="signIn()" style="margin-right: 10px;">Авторизоваться в Google</button>
             <button id="signout_button" onclick="signOut()" style="display: none;">Выйти из Google</button>
         </div>
     </div>
-
-    <!-- Подключение Google API -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-    <script src="script.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
