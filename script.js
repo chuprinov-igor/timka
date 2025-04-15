@@ -1,4 +1,5 @@
 // --- Заполнители для GitHub Actions ---
+// Эти строки будут заменены реальными значениями во время сборки на GitHub Actions
 const CLIENT_ID = '{{ GITHUB_SECRET_CLIENT_ID }}';
 const SPREADSHEET_ID = '{{ GITHUB_SECRET_SPREADSHEET_ID }}';
 const API_KEY = '{{ GITHUB_SECRET_API_KEY }}';
@@ -9,8 +10,8 @@ const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 let gapiInited = false;
 let gisInited = false;
-let gapiClient = null;
-let authInstance = null;
+let gapiClient = null; // Для хранения клиента GAPI
+let authInstance = null; // Для хранения экземпляра Auth2
 
 // Функции обратного вызова для загрузки скриптов Google
 function gapiLoaded() {
@@ -32,9 +33,9 @@ async function initializeGapiClient() {
             scope: SCOPES
         });
         gapiInited = true;
-        gapiClient = gapi.client;
-        authInstance = gapi.auth2.getAuthInstance();
-        authInstance.isSignedIn.listen(updateSigninStatus);
+        gapiClient = gapi.client; // Сохраняем клиент
+        authInstance = gapi.auth2.getAuthInstance(); // Сохраняем Auth2
+        authInstance.isSignedIn.listen(updateSigninStatus); // Устанавливаем слушатель статуса входа
         checkInitComplete();
     } catch (error) {
         console.error('Ошибка инициализации gapi.client:', error);
@@ -42,7 +43,7 @@ async function initializeGapiClient() {
     }
 }
 
-// Проверяем, загружены ли библиотеки и инициализирован ли GAPI
+// Проверяем, загружены ли обе библиотеки и инициализирован ли GAPI
 function checkInitComplete() {
     if (gapiInited) {
         console.log("GAPI инициализирован.");
@@ -50,23 +51,17 @@ function checkInitComplete() {
     }
 }
 
-// Обновление статуса авторизации
+// Обновление статуса авторизации и загрузка данных при входе
 function updateSigninStatus(isSignedIn) {
     const authButton = document.getElementById('authorize_button');
-    const signoutButton = document.getElementById('signout_button');
-    const saveButton = document.querySelector('button[type="submit"]');
-
+    const signOutButton = document.getElementById('signout_button');
     if (isSignedIn) {
-        console.log("Пользователь авторизован.");
         authButton.style.display = 'none';
-        signoutButton.style.display = 'inline-block';
-        saveButton.disabled = false;
+        signOutButton.style.display = 'block';
         loadLastEntry();
     } else {
-        console.log("Пользователь не авторизован.");
-        authButton.style.display = 'inline-block';
-        signoutButton.style.display = 'none';
-        saveButton.disabled = true;
+        authButton.style.display = 'block';
+        signOutButton.style.display = 'none';
         setupDefaultState();
     }
 }
@@ -101,11 +96,6 @@ function setDefaultDate() {
 // Сброс формы и установка начального состояния
 function setupDefaultState() {
     setDefaultDate();
-    const tabletsOtherInput = document.getElementById('tabletsOtherInput');
-    if (tabletsOtherInput) tabletsOtherInput.classList.remove('active');
-    const nauseaSection = document.getElementById('nausea-section');
-    if (nauseaSection) nauseaSection.classList.remove('active');
-
     document.querySelectorAll('.input-field[id]').forEach(el => {
         if (el.tagName === 'SELECT') {
             el.selectedIndex = 0;
@@ -117,91 +107,13 @@ function setupDefaultState() {
             }
         }
     });
-
-    const otherTextInput = document.getElementById('tabletsOtherText');
-    if (otherTextInput) otherTextInput.value = '';
-    const mealCount = document.getElementById('mealCount');
-    if (mealCount) mealCount.value = '0';
-    const appetite = document.getElementById('appetite');
-    if (appetite) appetite.value = 'Хороший';
-    const stoolCount = document.getElementById('stoolCount');
-    if (stoolCount) stoolCount.value = 'Один';
-    const stoolConsistency = document.getElementById('stoolConsistency');
-    if (stoolConsistency) stoolConsistency.value = 'Камушки';
-    const stress = document.getElementById('stress');
-    if (stress) stress.value = 'Нет';
-    const leakage = document.getElementById('leakage');
-    if (leakage) leakage.value = 'Нет';
-    const condition = document.getElementById('condition');
-    if (condition) condition.value = 'Активный';
-    const nauseaInput = document.getElementById('nausea');
-    if (nauseaInput) nauseaInput.value = '';
-    const vomitingInput = document.getElementById('vomiting');
-    if (vomitingInput) vomitingInput.value = '';
-}
-
-// Заполнение формы данными последней записи
-function populateForm(entry) {
-    entry = entry || {};
-
-    const tablets = entry.tablets || [];
-    let otherTabletValue = '';
-    const standardTablets = ['Апоквел (2р/д)', 'Урсосан (1р/д)', 'Энтерол (2р/д)', 'Лактобиф (1р/д)'];
-    document.querySelectorAll('.checkbox-input[name="tablets"]').forEach(checkbox => {
-        const isStandard = standardTablets.includes(checkbox.value);
-        const isOtherCheckbox = checkbox.id === 'tabletsOther';
-        checkbox.checked = false;
-
-        if (tablets.includes(checkbox.value)) {
-            checkbox.checked = true;
-        } else if (isOtherCheckbox) {
-            const otherVal = tablets.find(t => t && !standardTablets.includes(t));
-            if (otherVal) {
-                checkbox.checked = true;
-                otherTabletValue = otherVal;
-            }
-        }
-    });
-    const tabletsOtherText = document.getElementById('tabletsOtherText');
-    const tabletsOtherInput = document.getElementById('tabletsOtherInput');
-    const tabletsOtherCheckbox = document.getElementById('tabletsOther');
-    if (tabletsOtherText) tabletsOtherText.value = otherTabletValue;
-    if (tabletsOtherInput && tabletsOtherCheckbox) {
-        tabletsOtherInput.classList.toggle('active', tabletsOtherCheckbox.checked);
-    }
-
-    const food = entry.food || [];
-    document.querySelectorAll('.checkbox-input[name="food"]').forEach(checkbox => {
-        checkbox.checked = food.includes(checkbox.value);
-    });
-
-    const mealCount = document.getElementById('mealCount');
-    if (mealCount) mealCount.value = entry.mealCount || '0';
-    const appetite = document.getElementById('appetite');
-    if (appetite) appetite.value = entry.appetite || 'Хороший';
-    const stoolCount = document.getElementById('stoolCount');
-    if (stoolCount) stoolCount.value = entry.stoolCount || 'Один';
-    const stoolConsistency = document.getElementById('stoolConsistency');
-    if (stoolConsistency) stoolConsistency.value = entry.stoolConsistency || 'Камушки';
-    const nausea = document.getElementById('nausea');
-    if (nausea) nausea.value = entry.nausea || '';
-    const vomiting = document.getElementById('vomiting');
-    if (vomiting) vomiting.value = entry.vomiting || '';
-    const stress = document.getElementById('stress');
-    if (stress) stress.value = entry.stress || 'Нет';
-    const leakage = document.getElementById('leakage');
-    if (leakage) leakage.value = entry.leakage || 'Нет';
-    const condition = document.getElementById('condition');
-    if (condition) condition.value = entry.condition || 'Активный';
-
-    const nauseaSection = document.getElementById('nausea-section');
-    if (nauseaSection) {
-        if (entry.nausea || entry.vomiting) {
-            nauseaSection.classList.add('active');
-        } else {
-            nauseaSection.classList.remove('active');
-        }
-    }
+    document.getElementById('mealCount')?.setValue('0');
+    document.getElementById('appetite')?.setValue('Хороший');
+    document.getElementById('stoolCount')?.setValue('Один');
+    document.getElementById('stoolConsistency')?.setValue('Камушки');
+    document.getElementById('stress')?.setValue('Нет');
+    document.getElementById('leakage')?.setValue('Нет');
+    document.getElementById('condition')?.setValue('Активный');
 }
 
 // Загрузка последней записи из Google Sheets
@@ -211,73 +123,69 @@ async function loadLastEntry() {
         setupDefaultState();
         return;
     }
-
-    console.log('Загрузка последней записи...');
     try {
-        const range = 'Sheet1!A:L';
         const response = await gapiClient.sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: range,
+            range: 'Sheet1!A:L',
         });
-
         const data = response.result.values;
         if (data && data.length > 1) {
-            let lastRow = null;
-            for (let i = data.length - 1; i >= 0; i--) {
-                if (data[i][0]) {
-                    lastRow = data[i];
-                    break;
-                }
-            }
-
-            if (lastRow) {
-                console.log('Последняя запись найдена:', lastRow);
-                const lastEntry = {
-                    tablets: lastRow[1] ? lastRow[1].split(',').map(s => s.trim()).filter(Boolean) : [],
-                    food: lastRow[2] ? lastRow[2].split(',').map(s => s.trim()).filter(Boolean) : [],
-                    mealCount: lastRow[3] || '0',
-                    appetite: lastRow[4] || 'Хороший',
-                    stoolCount: lastRow[5] || 'Один',
-                    stoolConsistency: lastRow[6] || 'Камушки',
-                    nausea: lastRow[7] || '',
-                    vomiting: lastRow[8] || '',
-                    stress: lastRow[9] || 'Нет',
-                    leakage: lastRow[10] || 'Нет',
-                    condition: lastRow[11] || 'Активный'
-                };
-                populateForm(lastEntry);
-            } else {
-                console.log('В таблице нет строк с данными, используем значения по умолчанию.');
-                setupDefaultState();
-            }
+            const lastRow = data[data.length - 1];
+            const lastEntry = {
+                tablets: lastRow[1] ? lastRow[1].split(',').map(s => s.trim()).filter(Boolean) : [],
+                food: lastRow[2] ? lastRow[2].split(',').map(s => s.trim()).filter(Boolean) : [],
+                mealCount: lastRow[3] || '0',
+                appetite: lastRow[4] || 'Хороший',
+                stoolCount: lastRow[5] || 'Один',
+                stoolConsistency: lastRow[6] || 'Камушки',
+                nausea: lastRow[7] || '',
+                vomiting: lastRow[8] || '',
+                stress: lastRow[9] || 'Нет',
+                leakage: lastRow[10] || 'Нет',
+                condition: lastRow[11] || 'Активный'
+            };
+            populateForm(lastEntry);
         } else {
-            console.log('В таблице нет строк данных (кроме заголовка?), используем значения по умолчанию.');
             setupDefaultState();
         }
     } catch (error) {
         console.error('Ошибка загрузки последней записи:', error);
-        handleError('Не удалось загрузить данные из Google Sheets: ' + (error?.result?.error?.message || error.message));
+        handleError('Не удалось загрузить данные из Google Sheets.');
         setupDefaultState();
     }
+}
+
+// Заполнение формы данными последней записи
+function populateForm(entry) {
+    entry = entry || {};
+    document.querySelectorAll('.checkbox-input[name="tablets"]').forEach(checkbox => {
+        checkbox.checked = entry.tablets.includes(checkbox.value);
+    });
+    document.querySelectorAll('.checkbox-input[name="food"]').forEach(checkbox => {
+        checkbox.checked = entry.food.includes(checkbox.value);
+    });
+    document.getElementById('mealCount')?.setValue(entry.mealCount || '0');
+    document.getElementById('appetite')?.setValue(entry.appetite || 'Хороший');
+    document.getElementById('stoolCount')?.setValue(entry.stoolCount || 'Один');
+    document.getElementById('stoolConsistency')?.setValue(entry.stoolConsistency || 'Камушки');
+    document.getElementById('nausea')?.setValue(entry.nausea || '');
+    document.getElementById('vomiting')?.setValue(entry.vomiting || '');
+    document.getElementById('stress')?.setValue(entry.stress || 'Нет');
+    document.getElementById('leakage')?.setValue(entry.leakage || 'Нет');
+    document.getElementById('condition')?.setValue(entry.condition || 'Активный');
 }
 
 // Сохранение данных в Google Sheets
 async function saveToGoogleSheets(formData) {
     if (!gapiClient || !authInstance || !authInstance.isSignedIn.get()) {
-        handleError('Не авторизован или GAPI не готов для сохранения.');
+        handleError('Не авторизован.');
         return;
     }
-
-    console.log("Сохранение данных:", formData);
-
-    const tabletsString = formData.tablets.join(', ');
-    const foodString = formData.food.join(', ');
-
     const values = [
         [
             formData.date,
-            tabletsString,
-            foodString,
+            formData.tablets.join(', '),
+            formData.food.join(', '),
             formData.mealCount,
             formData.appetite,
             formData.stoolCount,
@@ -289,15 +197,69 @@ async function saveToGoogleSheets(formData) {
             formData.condition
         ]
     ];
-
     try {
-        const response = await gapiClient.sheets.spreadsheets.values.append({
+        await gapiClient.sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: 'Sheet1!A1',
             valueInputOption: 'USER_ENTERED',
-            insertDataOption: 'INSERT_ROWS',
-            resource: {
-                values: values
+            resource: { values }
+        });
+        alert('Данные успешно сохранены!');
+        setupDefaultState();
+    } catch (error) {
+        console.error('Ошибка сохранения:', error);
+        handleError('Ошибка при сохранении данных.');
+    }
+}
+
+// Обработка отправки формы
+function handleSubmit(event) {
+    event.preventDefault();
+    const tabletsCheckboxes = document.querySelectorAll('.checkbox-input[name="tablets"]:checked');
+    const foodCheckboxes = document.querySelectorAll('.checkbox-input[name="food"]:checked');
+    const formData = {
+        date: document.getElementById('date')?.value,
+        tablets: Array.from(tabletsCheckboxes).map(cb => cb.value),
+        food: Array.from(foodCheckboxes).map(cb => cb.value),
+        mealCount: document.getElementById('mealCount')?.value || '0',
+        appetite: document.getElementById('appetite')?.value || 'Хороший',
+        stoolCount: document.getElementById('stoolCount')?.value || 'Один',
+        stoolConsistency: document.getElementById('stoolConsistency')?.value || 'Камушки',
+        nausea: document.getElementById('nausea')?.value.trim() || '',
+        vomiting: document.getElementById('vomiting')?.value.trim() || '',
+        stress: document.getElementById('stress')?.value || 'Нет',
+        leakage: document.getElementById('leakage')?.value || 'Нет',
+        condition: document.getElementById('condition')?.value || 'Активный'
+    };
+    if (!formData.date) {
+        handleError('Укажите дату!');
+        return;
+    }
+    if (authInstance && authInstance.isSignedIn.get()) {
+        saveToGoogleSheets(formData);
+    } else {
+        handleError('Требуется авторизация.');
+        signIn();
+    }
+}
+
+// Универсальный обработчик ошибок
+function handleError(message) {
+    console.error(message);
+    alert(message);
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    setDefaultDate();
+    setupDefaultState();
+    const otherCheckbox = document.getElementById('tabletsOther');
+    if (otherCheckbox) {
+        otherCheckbox.addEventListener('change', function() {
+            const otherInputSection = document.getElementById('tabletsOtherInput');
+            if (otherInputSection) {
+                otherInputSection.classList.toggle('active', this.checked);
             }
         });
-       
+    }
+});
