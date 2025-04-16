@@ -40,6 +40,8 @@ jobs:
           sed -i "s|{{ GITHUB_SECRET_SPREADSHEET_ID }}|$SPREADSHEET_ID_VALUE|g" script.js
           sed -i "s|{{ GITHUB_SECRET_API_KEY }}|$API_KEY_VALUE|g" script.js
           echo "Secrets replaced in script.js"
+          echo "--- Содержимое script.js после замены ---"
+          cat script.js # Добавленная строка для вывода содержимого файла
         env:
           # Передаем секреты в переменные окружения шага
           CLIENT_ID_VALUE: ${{ secrets.CLIENT_ID }}
