@@ -29,21 +29,22 @@ jobs:
 
       - name: Replace Secrets in JS
         run: |
-          # Проверяем, существует ли файл script.js
+          echo "Checking environment variables..."
+          echo "CLIENT_ID_VALUE starts with: ${CLIENT_ID_VALUE:0:5}" # Вывести первые 5 символов
+          echo "SPREADSHEET_ID_VALUE length: ${#SPREADSHEET_ID_VALUE}" # Вывести длину ID таблицы
+          echo "API_KEY_VALUE starts with: ${API_KEY_VALUE:0:5}" # Вывести первые 5 символов API ключа
+
           if [ ! -f script.js ]; then
-            echo "Error: script.js not found!"
-            exit 1
+          echo "Error: script.js not found!"
+          exit 1
           fi
-          # Заменяем заполнители на реальные секреты
-          # Используем переменные окружения, чтобы избежать проблем со спецсимволами в секретах
           sed -i "s|{{ GITHUB_SECRET_CLIENT_ID }}|$CLIENT_ID_VALUE|g" script.js
           sed -i "s|{{ GITHUB_SECRET_SPREADSHEET_ID }}|$SPREADSHEET_ID_VALUE|g" script.js
           sed -i "s|{{ GITHUB_SECRET_API_KEY }}|$API_KEY_VALUE|g" script.js
-          echo "Secrets replaced in script.js"
+          echo "Secrets replacement attempted in script.js"
           echo "--- Содержимое script.js после замены ---"
-          cat script.js # Добавленная строка для вывода содержимого файла
+          cat script.js
         env:
-          # Передаем секреты в переменные окружения шага
           CLIENT_ID_VALUE: ${{ secrets.CLIENT_ID }}
           SPREADSHEET_ID_VALUE: ${{ secrets.SPREADSHEET_ID }}
           API_KEY_VALUE: ${{ secrets.API_KEY }}
