@@ -1,5 +1,5 @@
 name: Replace Secrets in JS
-  run: |
+run: |
   echo "CLIENT_ID_VALUE: $CLIENT_ID_VALUE"
   echo "SPREADSHEET_ID_VALUE: $SPREADSHEET_ID_VALUE"
   echo "API_KEY_VALUE: $API_KEY_VALUE"
