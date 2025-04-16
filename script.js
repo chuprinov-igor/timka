@@ -14,7 +14,7 @@ let authInstance = null;
 
 // Функции обратного вызова для загрузки скриптов Google
 function gapiLoaded() {
-    console.log('gapi.js загружен');
+    console.log('gapiLoaded вызвана');
     gapi.load('client:auth2', () => {
         console.log('client:auth2 загружен');
         initializeGapiClient();
@@ -22,7 +22,7 @@ function gapiLoaded() {
 }
 
 function gisLoaded() {
-    console.log('gis client загружен');
+    console.log('gisLoaded вызвана');
     gisInited = true;
     checkInitComplete();
 }
