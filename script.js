@@ -9,54 +9,49 @@ const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 let gapiInited = false;
 let gisInited = false;
 let gapiClient = null;
-let authInstance = null;
+let isSignedIn = false;
 
-// Функции обратного вызова для загрузки скриптов Google
+// Функция загрузки GAPI
 function gapiLoaded() {
     console.log('gapiLoaded вызвана');
-    gapi.load('client:auth2', () => {
-        console.log('client:auth2 загружен');
-        initializeGapiClient();
-    });
+    gapi.load('client', initializeGapiClient);
 }
 
-// Инициализация GSI
+// Функция загрузки Google Identity Services
 function gisLoaded() {
-    console.log('GSI загружен');
-    const clientId = CLIENT_ID;
-    const discoveryDocs = DISCOVERY_DOCS;
-    const scope = SCOPES;
-
-    // Создаем кнопку авторизации
+    console.log('Google Identity Services загружен');
+    
+    // Инициализация Google Identity Services
     google.accounts.id.initialize({
-        client_id: clientId,
+        client_id: CLIENT_ID,
         callback: handleCredentialResponse,
-        context: { 'discoveryDocs': discoveryDocs, 'scope': scope }
+        scope: SCOPES
     });
-
-    // Отображаем кнопку
+    
+    // Отображаем кнопку авторизации
     google.accounts.id.renderButton(
         document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large" }  // Дополнительные параметры
+        { theme: "outline", size: "large", text: "signin_with" }
     );
-}
 
+    // Автоматический показ формы входа, если нужно (опционально)
+    // google.accounts.id.prompt();
+    
+    gisInited = true;
+    checkInitComplete();
+}
 
 // Инициализация GAPI Client
 async function initializeGapiClient() {
     try {
         console.log('Инициализация GAPI с API_KEY:', API_KEY);
-        console.log('Инициализация GAPI с CLIENT_ID:', CLIENT_ID); // Добавь эту строку
         await gapi.client.init({
             apiKey: API_KEY,
-            clientId: CLIENT_ID,
-            discoveryDocs: DISCOVERY_DOCS,
-            scope: SCOPES
+            discoveryDocs: DISCOVERY_DOCS
         });
+        
         gapiInited = true;
         gapiClient = gapi.client;
-        authInstance = gapi.auth2.getAuthInstance();
-        authInstance.isSignedIn.listen(updateSigninStatus);
         console.log('GAPI успешно инициализирован');
         checkInitComplete();
     } catch (error) {
@@ -65,69 +60,86 @@ async function initializeGapiClient() {
     }
 }
 
-// Обработка ответа после успешной авторизации НОВОЕ ОТ QWAN!!!!!
+// Обработка ответа после успешной авторизации
 function handleCredentialResponse(response) {
-    console.log("Креденциалы:", response);
-    const token = response.credential;
-
-    // Используйте токен для доступа к Google Sheets API
-    gapi.client.init({
-        access_token: token,
-        discoveryDocs: DISCOVERY_DOCS,
-        apiKey: API_KEY
-    }).then(function () {
-        console.log('API успешно инициализирован');
-        // Здесь можно вызвать функции для работы с Google Sheets
-    });
-}
-
-
-// Проверяем, загружены ли библиотеки и инициализирован ли GAPI
-function checkInitComplete() {
-    if (gapiInited) {
-        console.log("GAPI инициализирован.");
-        updateSigninStatus(authInstance.isSignedIn.get());
+    console.log("Получены креденциалы:", response);
+    
+    try {
+        const credential = response.credential;
+        
+        // Используем ID-токен как токен доступа для GAPI
+        gapi.client.setToken({
+            access_token: credential
+        });
+        
+        console.log('Токен установлен успешно');
+        isSignedIn = true;
+        updateSigninStatus(true);
+    } catch (error) {
+        console.error('Ошибка обработки авторизации:', error);
+        handleError('Ошибка авторизации: ' + error.message);
     }
 }
 
-// Обновление статуса авторизации
-function updateSigninStatus(isSignedIn) {
-    const authButton = document.getElementById('authorize_button');
+// Проверка завершения инициализации API
+function checkInitComplete() {
+    if (gapiInited && gisInited) {
+        console.log("Все API инициализированы.");
+        
+        // Проверяем, есть ли активный токен
+        const token = gapi.client.getToken();
+        if (token) {
+            console.log("Найден активный токен:", token);
+            isSignedIn = true;
+            updateSigninStatus(true);
+        } else {
+            console.log("Активный токен не найден");
+            isSignedIn = false;
+            updateSigninStatus(false);
+        }
+    }
+}
+
+// Обновление статуса авторизации в интерфейсе
+function updateSigninStatus(signedIn) {
+    const authButton = document.getElementById('buttonDiv');
     const signoutButton = document.getElementById('signout_button');
     const saveButton = document.querySelector('button[type="submit"]');
 
-    if (isSignedIn) {
+    if (signedIn) {
         console.log("Пользователь авторизован.");
-        authButton.style.display = 'none';
-        signoutButton.style.display = 'inline-block';
-        saveButton.disabled = false;
+        if (authButton) authButton.style.display = 'none';
+        if (signoutButton) signoutButton.style.display = 'inline-block';
+        if (saveButton) saveButton.disabled = false;
         loadLastEntry();
     } else {
         console.log("Пользователь не авторизован.");
-        authButton.style.display = 'inline-block';
-        signoutButton.style.display = 'none';
-        saveButton.disabled = true;
+        if (authButton) authButton.style.display = 'inline-block';
+        if (signoutButton) signoutButton.style.display = 'none';
+        if (saveButton) saveButton.disabled = true;
         setupDefaultState();
-    }
-}
-
-// Функция для входа
-function signIn() {
-    if (authInstance) {
-        console.log('Запуск авторизации...');
-        authInstance.signIn();
-    } else {
-        handleError("Ошибка: Google Auth не инициализирован.");
     }
 }
 
 // Функция для выхода
 function signOut() {
-    if (authInstance) {
-        console.log('Выход из аккаунта...');
-        authInstance.signOut();
-    } else {
-        handleError("Ошибка: Google Auth не инициализирован.");
+    console.log('Выполняется выход из аккаунта...');
+    
+    // Очищаем токен
+    gapi.client.setToken(null);
+    isSignedIn = false;
+    
+    // Обновляем интерфейс
+    updateSigninStatus(false);
+    
+    // Показываем возможность входа снова
+    const authButton = document.getElementById('buttonDiv');
+    if (authButton) {
+        google.accounts.id.renderButton(
+            authButton,
+            { theme: "outline", size: "large", text: "signin_with" }
+        );
+        authButton.style.display = 'inline-block';
     }
 }
 
@@ -248,7 +260,7 @@ function populateForm(entry) {
 
 // Загрузка последней записи из Google Sheets
 async function loadLastEntry() {
-    if (!gapiClient || !authInstance || !authInstance.isSignedIn.get()) {
+    if (!gapiClient || !isSignedIn) {
         console.log('Не авторизован или GAPI не готов для loadLastEntry');
         setupDefaultState();
         return;
@@ -305,7 +317,7 @@ async function loadLastEntry() {
 
 // Сохранение данных в Google Sheets
 async function saveToGoogleSheets(formData) {
-    if (!gapiClient || !authInstance || !authInstance.isSignedIn.get()) {
+    if (!gapiClient || !isSignedIn) {
         handleError('Не авторизован или GAPI не готов для сохранения.');
         return;
     }
@@ -390,11 +402,11 @@ function handleSubmit(event) {
         return;
     }
 
-    if (authInstance && authInstance.isSignedIn.get()) {
+    if (isSignedIn) {
         saveToGoogleSheets(formData);
     } else {
         handleError('Требуется авторизация в Google для сохранения данных.');
-        signIn();
+        google.accounts.id.prompt(); // Показываем диалог авторизации
     }
 }
 
@@ -444,5 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('diaryForm');
     if (form) {
         form.addEventListener('submit', handleSubmit);
+    }
+    
+    const signoutButton = document.getElementById('signout_button');
+    if (signoutButton) {
+        signoutButton.addEventListener('click', signOut);
     }
 });
