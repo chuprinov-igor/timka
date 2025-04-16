@@ -20,11 +20,27 @@ function gapiLoaded() {
     });
 }
 
+// Инициализация GSI
 function gisLoaded() {
-    console.log('gisLoaded вызвана');
-    gisInited = true;
-    checkInitComplete();
+    console.log('GSI загружен');
+    const clientId = CLIENT_ID;
+    const discoveryDocs = DISCOVERY_DOCS;
+    const scope = SCOPES;
+
+    // Создаем кнопку авторизации
+    google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleCredentialResponse,
+        context: { 'discoveryDocs': discoveryDocs, 'scope': scope }
+    });
+
+    // Отображаем кнопку
+    google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }  // Дополнительные параметры
+    );
 }
+
 
 // Инициализация GAPI Client
 async function initializeGapiClient() {
@@ -48,6 +64,23 @@ async function initializeGapiClient() {
         handleError('Ошибка инициализации Google API Client: ' + (error?.details || error.message));
     }
 }
+
+// Обработка ответа после успешной авторизации НОВОЕ ОТ QWAN!!!!!
+function handleCredentialResponse(response) {
+    console.log("Креденциалы:", response);
+    const token = response.credential;
+
+    // Используйте токен для доступа к Google Sheets API
+    gapi.client.init({
+        access_token: token,
+        discoveryDocs: DISCOVERY_DOCS,
+        apiKey: API_KEY
+    }).then(function () {
+        console.log('API успешно инициализирован');
+        // Здесь можно вызвать функции для работы с Google Sheets
+    });
+}
+
 
 // Проверяем, загружены ли библиотеки и инициализирован ли GAPI
 function checkInitComplete() {
