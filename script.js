@@ -1,8 +1,3 @@
-// --- Учетные данные (замените для локального тестирования) ---
-//const CLIENT_ID = '{{ GITHUB_SECRET_CLIENT_ID }}'; // Замените на ваш Client ID
-//const SPREADSHEET_ID = '{{ GITHUB_SECRET_SPREADSHEET_ID }}'; // Замените на ID таблицы
-//const API_KEY = '{{ GITHUB_SECRET_API_KEY }}'; // Замените на ваш API Key
-// ---------------------------------------
 
 const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
