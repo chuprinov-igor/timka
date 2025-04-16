@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Гастродневник для собаки</title>
     <link rel="stylesheet" href="style.css">
+      <script>
+      function gapi_onload() {
+        console.log('gapi_onload вызвана');
+        gapiLoaded();
+      }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -242,8 +248,8 @@
     gapiLoaded();
   }
 </script>
-<script src="https://apis.google.com/js/api.js" async defer></script>
-    <script src="https://accounts.google.com/gsi/client" defer></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" defer onload="gisLoaded()"></script>
     <script src="script.js"></script>
 </body>
 </html>
