@@ -236,7 +236,13 @@
             <button id="signout_button" onclick="signOut()" style="display: none;">Выйти из Google</button>
         </div>
     </div>
-    <script src="https://apis.google.com/js/api.js"></script>
+<script>
+  function gapi_onload() {
+    console.log('gapi_onload вызвана');
+    gapiLoaded();
+  }
+</script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
     <script src="https://accounts.google.com/gsi/client" defer></script>
     <script src="script.js"></script>
 </body>
