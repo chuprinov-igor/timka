@@ -52,6 +52,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4 # Настраиваем GitHub Pages
 
+        # ---- НОВЫЙ ШАГ ДЛЯ ПРОВЕРКИ ----
+      - name: Verify script.js before artifact upload
+        run: |
+          echo "Listing files in current directory (path: '.')"
+          ls -la
+          echo "--- Содержимое script.js ПЕРЕД загрузкой артефакта ---"
+          cat script.js
+      # ---------------------------------
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3 # Загружаем файлы сайта как артефакт
         with:
