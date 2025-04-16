@@ -1,55 +1,30 @@
-name: Build and Deploy
+- name: Replace Secrets in JS
+  run: |
+    echo "CLIENT_ID_VALUE: $CLIENT_ID_VALUE"
+    echo "SPREADSHEET_ID_VALUE: $SPREADSHEET_ID_VALUE"
+    echo "API_KEY_VALUE: $API_KEY_VALUE"
 
-on:
-  push:
-    branches:
-      - main
+    if [ ! -f script.js ]; then
+      echo "Error: script.js not found!"
+      exit 1
+    fi
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    if [ -z "$CLIENT_ID_VALUE" ] || [ -z "$SPREADSHEET_ID_VALUE" ] || [ -z "$API_KEY_VALUE" ]; then
+      echo "Error: One or more secrets are missing!"
+      exit 1
+    fi
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    sed -i "s@{{ GITHUB_SECRET_CLIENT_ID }}@$CLIENT_ID_VALUE@g" script.js
+    sed -i "s@{{ GITHUB_SECRET_SPREADSHEET_ID }}@$SPREADSHEET_ID_VALUE@g" script.js
+    sed -i "s@{{ GITHUB_SECRET_API_KEY }}@$API_KEY_VALUE@g" script.js
 
-    - name: List files in repository
-      run: |
-        ls -la
+    if grep -q "{{ GITHUB_SECRET_" script.js; then
+      echo "Error: Some placeholders were not replaced in script.js"
+      exit 1
+    fi
 
-    - name: Replace Secrets in JS
-      run: |
-        # Проверяем, существует ли файл script.js
-        if [ ! -f script.js ]; then
-          echo "Error: script.js not found!"
-          exit 1
-        fi
-
-        # Проверяем, что все секреты предоставлены
-        if [ -z "$CLIENT_ID_VALUE" ] || [ -z "$SPREADSHEET_ID_VALUE" ] || [ -z "$API_KEY_VALUE" ]; then
-          echo "Error: One or more secrets are missing!"
-          exit 1
-        fi
-
-        # Заменяем заполнители на реальные секреты
-        sed -i "s@{{ GITHUB_SECRET_CLIENT_ID }}@$CLIENT_ID_VALUE@g" script.js
-        sed -i "s@{{ GITHUB_SECRET_SPREADSHEET_ID }}@$SPREADSHEET_ID_VALUE@g" script.js
-        sed -i "s@{{ GITHUB_SECRET_API_KEY }}@$API_KEY_VALUE@g" script.js
-
-        # Проверяем, что замены прошли успешно
-        if grep -q "{{ GITHUB_SECRET_" script.js; then
-          echo "Error: Some placeholders were not replaced in script.js"
-          exit 1
-        fi
-
-        echo "Secrets replaced in script.js"
-      env:
-        CLIENT_ID_VALUE: ${{ secrets.CLIENT_ID }}
-        SPREADSHEET_ID_VALUE: ${{ secrets.SPREADSHEET_ID }}
-        API_KEY_VALUE: ${{ secrets.API_KEY }}
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
+    echo "Secrets replaced in script.js"
+  env:
+    CLIENT_ID_VALUE: ${{ secrets.CLIENT_ID }}
+    SPREADSHEET_ID_VALUE: ${{ secrets.SPREADSHEET_ID }}
+    API_KEY_VALUE: ${{ secrets.API_KEY }}
