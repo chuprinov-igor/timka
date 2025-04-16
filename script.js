@@ -31,7 +31,7 @@ function gisLoaded() {
 async function initializeGapiClient() {
     try {
         console.log('Инициализация GAPI с API_KEY:', API_KEY);
-        console.log('Инициализация GAPI с CLIENT_ID:', CLIENT_ID);
+        console.log('Инициализация GAPI с CLIENT_ID:', CLIENT_ID); // Добавь эту строку
         await gapi.client.init({
             apiKey: API_KEY,
             clientId: CLIENT_ID,
