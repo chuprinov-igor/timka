@@ -1,4 +1,4 @@
-- name: Replace Secrets in JS
+ name: Replace Secrets in JS
   run: |
     echo "CLIENT_ID_VALUE: $CLIENT_ID_VALUE"
     echo "SPREADSHEET_ID_VALUE: $SPREADSHEET_ID_VALUE"
