@@ -21,7 +21,7 @@
     if grep -q "{{ GITHUB_SECRET_" script.js; then
       echo "Error: Some placeholders were not replaced in script.js"
       exit 1
-    fi
+      fi
 
     echo "Secrets replaced in script.js"
   env:
