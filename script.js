@@ -19,6 +19,7 @@ function gapiLoaded() {
 
 // Функция загрузки Google Identity Services
 function gisLoaded() {
+  
     console.log('Google Identity Services загружен');
     
     // Инициализация Google Identity Services
@@ -27,15 +28,18 @@ function gisLoaded() {
         callback: handleCredentialResponse,
         scope: SCOPES
     });
-    
-    // Отображаем кнопку авторизации
-    google.accounts.id.renderButton(
-        document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", text: "signin_with" }
-    );
-
+    console.log('Попытка рендеринга кнопки в #buttonDiv'); // Добавьте это
+    try {
+         google.accounts.id.renderButton(
+             document.getElementById("buttonDiv"),
+             { theme: "outline", size: "large", text: "signin_with" }
+         );
+         console.log('Кнопка должна быть отрендерена (если #buttonDiv найден)'); // Добавьте это
+    } catch (renderError) {
+        console.error('Ошибка рендеринга кнопки:', renderError); // Добавьте это
+    }
     // Автоматический показ формы входа, если нужно (опционально)
-    // google.accounts.id.prompt();
+google.accounts.id.prompt();
     
     gisInited = true;
     checkInitComplete();
