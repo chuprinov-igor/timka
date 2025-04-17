@@ -1,517 +1,259 @@
 <!DOCTYPE html>
-
 <html lang="ru">
-
 <head>
-
-    <meta charset="UTF-8">
-
+    <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://apis.google.com https://accounts.google.com">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Гастродневник для собаки</title>
-
-    <link rel="stylesheet" href="style.css">
-
-      <script>
-
-      function gapi_onload() {
-
-        console.log('gapi_onload вызвана');
-
-        gapiLoaded();
-
-      }
-
-    </script>
-
-        <script src="script.js"></script>
-
-       
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гастродневник для собаки</title>
+    <link rel="stylesheet" href="style.css">
+      <script>
+      function gapi_onload() {
+        console.log('gapi_onload вызвана');
+        gapiLoaded();
+      }
+    </script>
+        <script src="script.js"></script>
+       
 </head>
-
 <body>
-
-    <div class="container">
-
-        <div class="header">
-
-            <h1>🐶 Гастродневник для Тимочки</h1>
-
-        </div>
-
-        <div class="form-content">
-
-            <form id="diaryForm" onsubmit="handleSubmit(event)">
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">📅</div>
-
-                        <div class="section-title">Дата</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="date">Когда</label>
-
-                        <input type="date" id="date" class="input-field" required>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">💊</div>
-
-                        <div class="section-title">Таблетки</div>
-
-                    </div>
-
-                    <div class="checkbox-group">
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="tablets" value="Апоквел (2р/д)" id="tablet-apokvel" class="checkbox-input">
-
-                            <label for="tablet-apokvel" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Апоквел (2р/д)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="tablets" value="Урсосан (1р/д)" id="tablet-ursosan" class="checkbox-input">
-
-                            <label for="tablet-ursosan" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Урсосан (1р/д)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="tablets" value="Энтерол (2р/д)" id="tablet-enterol" class="checkbox-input">
-
-                            <label for="tablet-enterol" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Энтерол (2р/д)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="tablets" value="Лактобиф (1р/д)" id="tablet-lactobif" class="checkbox-input">
-
-                            <label for="tablet-lactobif" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Лактобиф (1р/д)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="tablets" value="Другое" id="tabletsOther" class="checkbox-input">
-
-                            <label for="tabletsOther" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Другое
-
-                            </label>
-
-                        </div>
-
-                    </div>
-
-                    <div id="tabletsOtherInput" class="optional-section">
-
-                        <div class="form-group">
-
-                            <label for="tabletsOtherText">Укажите</label>
-
-                            <input type="text" id="tabletsOtherText" class="input-field" placeholder="Например: Название (дозировка)">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">🥣</div>
-
-                        <div class="section-title">Корм</div>
-
-                    </div>
-
-                    <div class="checkbox-group">
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="food" value="Гастропаштет (Farmina)" id="food-farmina" class="checkbox-input">
-
-                            <label for="food-farmina" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Гастропаштет (Farmina)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="food" value="Гастрокорм (Forza10)" id="food-forza10" class="checkbox-input">
-
-                            <label for="food-forza10" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Гастрокорм (Forza10)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="food" value="Паштет (monge)" id="food-monge" class="checkbox-input">
-
-                            <label for="food-monge" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Паштет (monge)
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="food" value="Вкусняшки" id="food-treats" class="checkbox-input">
-
-                            <label for="food-treats" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Вкусняшки
-
-                            </label>
-
-                        </div>
-
-                        <div class="checkbox-item">
-
-                            <input type="checkbox" name="food" value="Со стола" id="food-table" class="checkbox-input">
-
-                            <label for="food-table" class="checkbox-label">
-
-                                <span class="checkbox-custom"></span>
-
-                                Со стола
-
-                            </label>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">🍽️</div>
-
-                        <div class="section-title">Кол-во приемов пищи</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="mealCount">Сколько раз</label>
-
-                        <input type="number" id="mealCount" class="input-field" min="0">
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">😋</div>
-
-                        <div class="section-title">Аппетит</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="appetite">Оценка</label>
-
-                        <select id="appetite" class="input-field">
-
-                            <option value="Хороший">Хороший</option>
-
-                            <option value="Вялый">Вялый</option>
-
-                            <option value="Отказ от еды">Отказ от еды</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">💩</div>
-
-                        <div class="section-title">Стул</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="stoolCount">Количество раз</label>
-
-                        <select id="stoolCount" class="input-field">
-
-                            <option value="Один">Один</option>
-
-                            <option value="Два">Два</option>
-
-                            <option value="Три">Три</option>
-
-                            <option value="Четыре и больше">Четыре и больше</option>
-
-                            <option value="Понос">Понос</option>
-
-                            <option value="Не было">Не было</option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="stoolConsistency">Консистенция</label>
-
-                        <select id="stoolConsistency" class="input-field">
-
-                            <option value="Камушки">Камушки</option>
-
-                            <option value="Колбаски">Колбаски</option>
-
-                            <option value="Мягкие">Мягкие</option>
-
-                            <option value="Жидкие">Жидкие</option>
-
-                            <option value="С кровью">С кровью</option>
-
-                            <option value="Со слизью">Со слизью</option>
-
-                            <option value="Не было">Не было</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">🤢</div>
-
-                        <div class="section-title">Дополнительные симптомы</div>
-
-                        <button type="button" class="section-action" onclick="toggleSymptoms()">Добавить/Скрыть</button>
-
-                    </div>
-
-                    <div id="nausea-section" class="optional-section">
-
-                        <div class="form-group">
-
-                            <label for="nausea">Тошнота</label>
-
-                            <input type="text" id="nausea" class="input-field" placeholder="Описание, если была">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label for="vomiting">Рвота</label>
-
-                            <input type="text" id="vomiting" class="input-field" placeholder="Описание, если была">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">😨</div>
-
-                        <div class="section-title">Стресс</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="stress">Был ли?</label>
-
-                        <select id="stress" class="input-field">
-
-                            <option value="Нет">Нет</option>
-
-                            <option value="Да">Да</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">💧</div>
-
-                        <div class="section-title">Недержание / Лужи</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="leakage">Были ли случаи?</label>
-
-                        <select id="leakage" class="input-field">
-
-                            <option value="Нет">Нет</option>
-
-                            <option value="Да слегка">Да слегка</option>
-
-                            <option value="Да сильно">Да сильно</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div class="form-section">
-
-                    <div class="section-header">
-
-                        <div class="section-icon">🟢</div>
-
-                        <div class="section-title">Состояние</div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="condition">Оценка</label>
-
-                        <select id="condition" class="input-field">
-
-                            <option value="Активный">Активный</option>
-
-                            <option value="Вялый слегка">Вялый слегка</option>
-
-                            <option value="Тяпочкой">Лежит тряпочкой</option>
-
-                            <option value="Беспокойный">Беспокойный</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-            </form>
-
-        </div>
-
-        <div class="button-group">
-
-            <button type="button" class="btn btn-secondary" onclick="document.getElementById('diaryForm').reset(); setupDefaultState();">Очистить</button>
-
-            <button type="submit" form="diaryForm" class="btn btn-primary">Сохранить</button>
-
-            <button id="authorize_button" onclick="signIn()" style="margin-right: 10px;">Авторизоваться в Google</button>
-
-            <button id="signout_button" onclick="signOut()" style="display: none;">Выйти из Google</button>
-
-        </div>
-
-        <div id="buttonDiv"></div>
-
-    </div>
-
+    <div class="container">
+        <div class="header">
+            <h1>🐶 Гастродневник для Тимочки</h1>
+        </div>
+        <div class="form-content">
+            <form id="diaryForm" onsubmit="handleSubmit(event)">
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">📅</div>
+                        <div class="section-title">Дата</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Когда</label>
+                        <input type="date" id="date" class="input-field" required>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">💊</div>
+                        <div class="section-title">Таблетки</div>
+                    </div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Апоквел (2р/д)" id="tablet-apokvel" class="checkbox-input">
+                            <label for="tablet-apokvel" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Апоквел (2р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Урсосан (1р/д)" id="tablet-ursosan" class="checkbox-input">
+                            <label for="tablet-ursosan" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Урсосан (1р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Энтерол (2р/д)" id="tablet-enterol" class="checkbox-input">
+                            <label for="tablet-enterol" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Энтерол (2р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Лактобиф (1р/д)" id="tablet-lactobif" class="checkbox-input">
+                            <label for="tablet-lactobif" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Лактобиф (1р/д)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="tablets" value="Другое" id="tabletsOther" class="checkbox-input">
+                            <label for="tabletsOther" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Другое
+                            </label>
+                        </div>
+                    </div>
+                    <div id="tabletsOtherInput" class="optional-section">
+                        <div class="form-group">
+                            <label for="tabletsOtherText">Укажите</label>
+                            <input type="text" id="tabletsOtherText" class="input-field" placeholder="Например: Название (дозировка)">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🥣</div>
+                        <div class="section-title">Корм</div>
+                    </div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Гастропаштет (Farmina)" id="food-farmina" class="checkbox-input">
+                            <label for="food-farmina" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Гастропаштет (Farmina)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Гастрокорм (Forza10)" id="food-forza10" class="checkbox-input">
+                            <label for="food-forza10" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Гастрокорм (Forza10)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Паштет (monge)" id="food-monge" class="checkbox-input">
+                            <label for="food-monge" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Паштет (monge)
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Вкусняшки" id="food-treats" class="checkbox-input">
+                            <label for="food-treats" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Вкусняшки
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="food" value="Со стола" id="food-table" class="checkbox-input">
+                            <label for="food-table" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Со стола
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🍽️</div>
+                        <div class="section-title">Кол-во приемов пищи</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mealCount">Сколько раз</label>
+                        <input type="number" id="mealCount" class="input-field" min="0">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">😋</div>
+                        <div class="section-title">Аппетит</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appetite">Оценка</label>
+                        <select id="appetite" class="input-field">
+                            <option value="Хороший">Хороший</option>
+                            <option value="Вялый">Вялый</option>
+                            <option value="Отказ от еды">Отказ от еды</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">💩</div>
+                        <div class="section-title">Стул</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="stoolCount">Количество раз</label>
+                        <select id="stoolCount" class="input-field">
+                            <option value="Один">Один</option>
+                            <option value="Два">Два</option>
+                            <option value="Три">Три</option>
+                            <option value="Четыре и больше">Четыре и больше</option>
+                            <option value="Понос">Понос</option>
+                            <option value="Не было">Не было</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stoolConsistency">Консистенция</label>
+                        <select id="stoolConsistency" class="input-field">
+                            <option value="Камушки">Камушки</option>
+                            <option value="Колбаски">Колбаски</option>
+                            <option value="Мягкие">Мягкие</option>
+                            <option value="Жидкие">Жидкие</option>
+                            <option value="С кровью">С кровью</option>
+                            <option value="Со слизью">Со слизью</option>
+                            <option value="Не было">Не было</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🤢</div>
+                        <div class="section-title">Дополнительные симптомы</div>
+                        <button type="button" class="section-action" onclick="toggleSymptoms()">Добавить/Скрыть</button>
+                    </div>
+                    <div id="nausea-section" class="optional-section">
+                        <div class="form-group">
+                            <label for="nausea">Тошнота</label>
+                            <input type="text" id="nausea" class="input-field" placeholder="Описание, если была">
+                        </div>
+                        <div class="form-group">
+                            <label for="vomiting">Рвота</label>
+                            <input type="text" id="vomiting" class="input-field" placeholder="Описание, если была">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">😨</div>
+                        <div class="section-title">Стресс</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="stress">Был ли?</label>
+                        <select id="stress" class="input-field">
+                            <option value="Нет">Нет</option>
+                            <option value="Да">Да</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">💧</div>
+                        <div class="section-title">Недержание / Лужи</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="leakage">Были ли случаи?</label>
+                        <select id="leakage" class="input-field">
+                            <option value="Нет">Нет</option>
+                            <option value="Да слегка">Да слегка</option>
+                            <option value="Да сильно">Да сильно</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">🟢</div>
+                        <div class="section-title">Состояние</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="condition">Оценка</label>
+                        <select id="condition" class="input-field">
+                            <option value="Активный">Активный</option>
+                            <option value="Вялый слегка">Вялый слегка</option>
+                            <option value="Тяпочкой">Лежит тряпочкой</option>
+                            <option value="Беспокойный">Беспокойный</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="button-group">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('diaryForm').reset(); setupDefaultState();">Очистить</button>
+            <button type="submit" form="diaryForm" class="btn btn-primary">Сохранить</button>
+            <button id="authorize_button" onclick="signIn()" style="margin-right: 10px;">Авторизоваться в Google</button>
+            <button id="signout_button" onclick="signOut()" style="display: none;">Выйти из Google</button>
+        </div>
+        <div id="buttonDiv"></div>
+    </div>
 <script>
-
-  function gapi_onload() {
-
-    console.log('gapi_onload вызвана');
-
-    gapiLoaded();
-
-  }
-
+  function gapi_onload() {
+    console.log('gapi_onload вызвана');
+    gapiLoaded();
+  }
 </script>
-
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-
- 
-
-
+ 
 
 </body>
-
 </html>
