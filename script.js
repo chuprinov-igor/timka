@@ -36,7 +36,7 @@ function gisLoaded() {
          );
          console.log('Кнопка должна быть отрендерена (если #buttonDiv найден)'); // Добавьте это
     } catch (renderError) {
-        console.error('Ошибка рендеринга кнопки:', renderError); // Добавьте это
+        console.error('Ошибка рендеринга кнопки: ', renderError); // Добавьте это
     }
     // Автоматический показ формы входа, если нужно (опционально)
 google.accounts.id.prompt();
