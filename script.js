@@ -17,29 +17,37 @@ function gapiLoaded() {
     gapi.load('client', initializeGapiClient);
 }
 
-// Функция загрузки Google Identity Services
-function gisLoaded() {
+window.gisLoaded = function() {
     console.log('Google Identity Services загружен');
+    console.log('google.accounts.id:', google.accounts.id);
     
-    // Инициализация Google Identity Services
-    google.accounts.id.initialize({
-        client_id: CLIENT_ID,
-        callback: handleCredentialResponse,
-        scope: SCOPES
-    });
+    const buttonDiv = document.getElementById("buttonDiv");
+    if (!buttonDiv) {
+        console.error('Элемент #buttonDiv не найден в DOM');
+        return;
+    }
+    console.log('Элемент #buttonDiv найден:', buttonDiv);
     
-    // Отображаем кнопку авторизации
-    google.accounts.id.renderButton(
-        document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", text: "signin_with" }
-    );
-
-    // Автоматический показ формы входа, если нужно (опционально)
-    // google.accounts.id.prompt();
+    try {
+        console.log('Инициализация Google Identity Services...');
+        google.accounts.id.initialize({
+            client_id: CLIENT_ID,
+            callback: handleCredentialResponse,
+            scope: SCOPES
+        });
+        console.log('Рендеринг кнопки Google Sign-In...');
+        google.accounts.id.renderButton(
+            buttonDiv,
+            { theme: "outline", size: "large", text: "signin_with" }
+        );
+        console.log('Кнопка Google Sign-In должна быть отрендерена. Проверяем содержимое #buttonDiv:', buttonDiv.innerHTML);
+    } catch (error) {
+        console.error('Ошибка при рендеринге кнопки Google Sign-In:', error);
+    }
     
     gisInited = true;
     checkInitComplete();
-}
+};
 
 // Инициализация GAPI Client
 async function initializeGapiClient() {
