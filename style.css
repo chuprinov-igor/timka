@@ -87,6 +87,13 @@ body {
     margin: 0;
 }
 
+#buttonDiv {
+    display: block !important;
+    min-height: 40px;
+    min-width: 200px;
+    margin-top: 10px;
+    background-color: yellow; /* Для отладки */
+}
 /* Form Content */
 .form-content {
     padding: 0 20px;
