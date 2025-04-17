@@ -241,10 +241,9 @@
         <div class="button-group">
             <button type="button" class="btn btn-secondary" onclick="document.getElementById('diaryForm').reset(); setupDefaultState();">Очистить</button>
             <button type="submit" form="diaryForm" class="btn btn-primary">Сохранить</button>
-            <button id="authorize_button" onclick="signIn()" style="margin-right: 10px;">Авторизоваться в Google</button>
             <button id="signout_button" onclick="signOut()" style="display: none;">Выйти из Google</button>
         </div>
-        <div id="buttonDiv"></div>
+        <button id="buttonDiv"> onclick="signIn()" style="margin-right: 10px;">Авторизоваться в Google</button>
     </div>
 <script>
   function gapi_onload() {
