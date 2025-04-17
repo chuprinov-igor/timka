@@ -30,7 +30,7 @@ jobs:
       - name: Replace Secrets in JS
         run: |
           echo "Checking environment variables..."
-          echo "CLIENT_ID_VALUE starts with: ${CLIENT_ID_VALUE:0:5}" # Вывести первые 5 символов
+          echo "CLIENT_ID_VALUE starts with: ${CLIENT_ID_VALUE:0:4}" # Вывести первые 4 символов
           echo "SPREADSHEET_ID_VALUE length: ${#SPREADSHEET_ID_VALUE}" # Вывести длину ID таблицы
           echo "API_KEY_VALUE starts with: ${API_KEY_VALUE:0:5}" # Вывести первые 5 символов API ключа
 
