@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Гастродневник для собаки</title>
     <link rel="stylesheet" href="style.css">
-  <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<!-- Удалите эту строку: -->
+<!-- <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script> -->
     <script src="script.js" defer></script>
        
 </head>
@@ -242,7 +243,7 @@
             </form>
         </div>
 
-<div id="buttonDiv"></div>
+<div id="buttonDiv" class="auth-button">Войти с Google</div>
     </div>
 <script>
   function gapi_onload() {
