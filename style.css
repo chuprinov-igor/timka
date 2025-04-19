@@ -23,22 +23,22 @@
     --system-gray4: #D1D1D6;
     --system-gray5: #E5E5EA;
     --system-gray6: #F2F2F7;
-    
+
     --primary-text: #1C1C1E;
     --secondary-text: #3C3C43;
     --tertiary-text: #48484A;
     --placeholder-text: rgba(60, 60, 67, 0.3);
-    
+
     --background-primary: #FFFFFF;
     --background-secondary: #F2F2F7;
     --background-tertiary: #E5E5EA;
-    
+
     --separator-color: rgba(60, 60, 67, 0.1);
     --opaque-separator: rgba(198, 198, 200, 0.5);
-    
+
     --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.2);
-    
+
     --section-radius: 12px;
     --element-radius: 10px;
     --small-radius: 6px;
@@ -94,6 +94,7 @@ body {
     margin-top: 10px;
     background-color: yellow; /* Для отладки */
 }
+
 /* Form Content */
 .form-content {
     padding: 0 20px;
@@ -127,6 +128,8 @@ body {
     margin-right: 12px;
     font-size: 18px;
     line-height: 1;
+    background-color: var(--system-gray6);
+    color: var(--primary-text);
 }
 
 .section-title {
@@ -145,6 +148,7 @@ body {
     padding: 0;
     margin: 0;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 /* Form Groups */
@@ -389,27 +393,27 @@ select.input-field {
         --secondary-text: #EBEBF599;
         --tertiary-text: #EBEBF54D;
         --placeholder-text: rgba(235, 235, 245, 0.3);
-        
+
         --background-primary: #1C1C1E;
         --background-secondary: #000000;
         --background-tertiary: #2C2C2E;
-        
+
         --separator-color: rgba(84, 84, 88, 0.65);
         --opaque-separator: rgba(56, 56, 58, 0.5);
-        
+
         --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.24), 0 1px 4px rgba(0, 0, 0, 0.12);
     }
-    
+
     .input-field {
         background-color: var(--background-tertiary);
         border-color: var(--separator-color);
         color: var(--primary-text);
     }
-    
+
     select.input-field {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
     }
-    
+
     .checkbox-custom {
         background-color: var(--background-tertiary);
         border-color: var(--separator-color);
@@ -418,7 +422,7 @@ select.input-field {
     .checkbox-label:hover .checkbox-custom {
         border-color: var(--system-gray);
     }
-    
+
     .btn-secondary {
         background-color: var(--background-tertiary);
         color: var(--system-blue);
