@@ -15,16 +15,14 @@
         <div class="header">
             <h1>🐶 Гастродневник для Тимочки</h1>
             <div id="auth-status">
-                <div id="buttonDiv"></div> <button id="signout_button" style="display: none;"> Выйти</button>
+                <div id="buttonDiv"></div>
+                <button id="signout_button" style="display: none;">Выйти</button>
                 <div id="g_id_signin"></div>
             </div>
         </div>
         <div class="form-content">
-            <form id="diaryForm"> <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" disabled>Сохранить запись</button>
-                    <button type="button" class="btn btn-secondary">Сбросить</button> </div>
-            </form>
             <form id="diaryForm" onsubmit="handleSubmit(event)">
+                <!-- Date Section -->
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">📅</div>
@@ -35,6 +33,8 @@
                         <input type="date" id="date" class="input-field" required>
                     </div>
                 </div>
+
+                <!-- Tablets Section -->
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">💊</div>
@@ -84,6 +84,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Food Section -->
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🥣</div>
@@ -127,6 +129,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Additional Sections -->
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🍽️</div>
@@ -137,6 +141,7 @@
                         <input type="number" id="mealCount" class="input-field" min="0">
                     </div>
                 </div>
+
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">😋</div>
@@ -151,6 +156,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">💩</div>
@@ -180,6 +186,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🤢</div>
@@ -197,6 +204,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">😨</div>
@@ -210,6 +218,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">💧</div>
@@ -224,6 +233,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">🟢</div>
@@ -242,18 +252,11 @@
             </form>
         </div>
 
-  <div class="button-group">
-                <button type="submit" class="btn-primary" disabled>Сохранить запись</button>
-                <button type="button" class="btn-secondary">Сбросить</button>
-            </div>
-// <script>
- // function gapi_onload() {
- //   console.log('gapi_onload вызвана');
- //   gapiLoaded();
-//  }
-//</script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
- 
-
+        <!-- Button Group -->
+        <div class="button-group">
+            <button type="submit" form="diaryForm" class="btn btn-primary" disabled>Сохранить запись</button>
+            <button type="button" class="btn btn-secondary">Сбросить</button>
+        </div>
+    </div>
 </body>
 </html>
