@@ -332,7 +332,7 @@ async function loadLastEntry() {
 
     console.log('Загрузка последней записи...');
     try {
-        const range = 'Sheet1!A:L'; // Убедитесь, что диапазон соответствует вашим столбцам
+        const range = 'Лист1!A2:L'; // Убедитесь, что диапазон соответствует вашим столбцам
         const response = await gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: range,
