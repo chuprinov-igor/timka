@@ -14,6 +14,55 @@ let gapiInited = false; // Флаг инициализации GAPI client
 let gisInited = false; // Флаг инициализации GIS
 let accessToken = null; // Хранение токена доступа
 
+// Обработка перенаправления после авторизации
+function handleRedirectCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authCode = urlParams.get('code'); // Код авторизации от Google
+
+    if (authCode) {
+        console.log('Получен код авторизации:', authCode);
+
+        // Обменять код авторизации на токен доступа
+        fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                code: authCode,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET, // Ваш секретный ключ клиента
+                redirect_uri: window.location.origin,
+                grant_type: 'authorization_code'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.access_token) {
+                console.log('Получен Access Token:', data.access_token);
+                accessToken = data.access_token;
+                gapi.client.setToken({ access_token: accessToken });
+                updateSigninStatus(true); // Обновляем UI - пользователь вошел
+                loadLastEntry(); // Загружаем данные
+            } else {
+                console.error('Ошибка обмена кода на токен:', data);
+                handleError('Не удалось получить токен доступа.');
+                updateSigninStatus(false);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при обмене кода на токен:', error);
+            handleError('Ошибка авторизации.');
+            updateSigninStatus(false);
+        });
+    }
+}
+
+// Проверяем, есть ли код авторизации в URL
+document.addEventListener('DOMContentLoaded', () => {
+    handleRedirectCallback();
+});
+
 // ----- Инициализация -----
 
 // Вызывается после загрузки скрипта GAPI Client (api.js)
@@ -45,33 +94,32 @@ async function initializeGapiClient() {
 // Вызывается после загрузки скрипта GIS (gsi/client)
 function gisLoaded() {
     console.log('gisLoaded вызвана');
-    // 1. Инициализируем Token Client для получения access_token
+    // Инициализация Token Client с перенаправлением
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        callback: tokenCallback, // Функция, которая будет вызвана после получения токена
-        error_callback: (error) => { // Обработка ошибок получения токена
-             console.error('Ошибка получения токена:', error);
-             handleError(`Ошибка авторизации: ${error.message || 'Не удалось получить токен.'}`);
-             updateSigninStatus(false); // Обновляем статус на "не вошел"
+        callback: tokenCallback, // Обработчик успешного получения токена
+        error_callback: (error) => {
+            console.error('Ошибка получения токена:', error);
+            handleError(`Ошибка авторизации: ${error.message || 'Не удалось получить токен.'}`);
+            updateSigninStatus(false);
         }
     });
-    gisInited = true;
-    console.log('GIS инициализирован, Token Client создан.');
-    // Попробовать загрузить данные, если GAPI уже готово
-    tryEnableButtonsAndLoadData();
 
-    // 2. Отображаем кнопку "Sign in with Google"
+    gisInited = true;
+
+    // Инициализация кнопки входа
     google.accounts.id.initialize({
         client_id: CLIENT_ID,
-        callback: handleCredentialResponse // Функция для обработки ID токена (не access!)
+        callback: handleCredentialResponse,
+        ux_mode: 'redirect', // Используем перенаправление вместо всплывающего окна
+        redirect_uri: window.location.origin // URL для перенаправления после авторизации
     });
+
     google.accounts.id.renderButton(
-        document.getElementById('g_id_signin'), // Контейнер для кнопки
-        { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular' } // Настройки внешнего вида
+        document.getElementById('g_id_signin'),
+        { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular' }
     );
-    // Можно скрыть кнопку, если пользователь уже вошел (если есть токен)
-    // google.accounts.id.prompt(); // Показать One Tap prompt, если нужно
 }
 
 // ----- Обработка Аутентификации и Авторизации -----
@@ -97,6 +145,10 @@ function requestAccessToken() {
         handleError("Ошибка: Клиент авторизации не готов.");
      }
 }
+// Обработчик кнопки входа
+document.getElementById('g_id_signin').addEventListener('click', () => {
+    google.accounts.id.prompt(); // Явный запрос входа
+});
 
 // Callback после получения Access Token (или ошибки)
 function tokenCallback(tokenResponse) {
