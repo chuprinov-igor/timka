@@ -437,7 +437,7 @@ async function saveToGoogleSheets(formData) {
     try {
         const response = await gapi.client.sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A1', // Добавляем в конец таблицы, начиная с A1
+            range: 'Лист1!A2', // Добавляем в конец таблицы, начиная с A2
             valueInputOption: 'USER_ENTERED', // Обрабатывать как ввод пользователя (для форматов дат и т.д.)
             insertDataOption: 'INSERT_ROWS', // Вставить как новые строки
             resource: {
