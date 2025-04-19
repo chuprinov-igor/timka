@@ -45,21 +45,38 @@ async function initializeGapiClient() {
 // Вызывается после загрузки скрипта GIS (gsi/client)
 function gisLoaded() {
     console.log('gisLoaded вызвана');
-    // 1. Инициализируем Token Client для получения access_token
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        callback: tokenCallback, // Функция, которая будет вызвана после получения токена
-        error_callback: (error) => { // Обработка ошибок получения токена
-             console.error('Ошибка получения токена:', error);
-             handleError(`Ошибка авторизации: ${error.message || 'Не удалось получить токен.'}`);
-             updateSigninStatus(false); // Обновляем статус на "не вошел"
+        callback: tokenCallback,
+        error_callback: (error) => {
+            console.error('Ошибка получения токена:', error);
+            handleError(`Ошибка авторизации: ${error.message || 'Не удалось получить токен.'}`);
+            updateSigninStatus(false);
         }
     });
     gisInited = true;
     console.log('GIS инициализирован, Token Client создан.');
-    // Попробовать загрузить данные, если GAPI уже готово
     tryEnableButtonsAndLoadData();
+
+    // Назначаем обработчик клика на кнопку входа
+    const signinButton = document.getElementById('signin_button');
+    if (signinButton) {
+        signinButton.addEventListener('click', () => {
+            requestAccessToken(); // Вызов синхронно по клику
+        });
+    }
+}
+
+function requestAccessToken() {
+    console.log('Запрос Access Token...');
+    if (tokenClient) {
+        tokenClient.requestAccessToken({ prompt: '' }); // Пустой prompt для минимизации окон
+    } else {
+        console.error("Token Client не инициализирован.");
+        handleError("Ошибка: Клиент авторизации не готов.");
+    }
+}
 
     // 2. Отображаем кнопку "Sign in with Google"
     google.accounts.id.initialize({
